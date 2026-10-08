@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xiaomi Utility</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: #0b0d10;
+  color: white;
+  min-height: 100vh;
+}
+
+header {
+  padding: 28px 20px 15px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 30px;
+}
+
+header p {
+  color: #8d929b;
+  margin-top: 5px;
+}
+
+.container {
+  padding: 15px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.card {
+  background: #15181d;
+  border: 1px solid #252a32;
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 15px;
+}
+
+.card h2 {
+  font-size: 19px;
+  margin-bottom: 15px;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background: #777;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 7px;
+}
+
+.value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+button {
+  width: 100%;
+  border: none;
+  border-radius: 15px;
+  padding: 15px;
+  margin-top: 10px;
+  background: #2d8cff;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+button.secondary {
+  background: #242931;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 15px 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.switch {
+  width: 52px;
+  height: 30px;
+  background: #333941;
+  border-radius: 20px;
+  position: relative;
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: .2s;
+}
+
+.switch.active {
+  background: #2d8cff;
+}
+
+.switch.active::after {
+  left: 25px;
+}
+
+.warning {
+  color: #ffb84d;
+  font-size: 13px;
+  margin-top: 12px;
+  line-height: 1.4;
+}
+
+footer {
+  text-align: center;
+  color: #656b74;
+  padding: 25px;
+  font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛴 Xiaomi Utility</h1>
+  <p>Deine Scooter Utility App</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <div class="status">
+      <div>
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Nicht verbunden</span>
+      </div>
+      <div class="value" id="battery">--%</div>
+    </div>
+
+    <button onclick="connectScooter()">
+      🔵 Scooter verbinden
+    </button>
+
+    <p class="warning">
+      Hinweis: Die Bluetooth-Steuerung funktioniert nur,
+      wenn der Browser Zugriff auf das entsprechende
+      Scooter-Bluetooth-Protokoll unterstützt.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Geschwindigkeit</h2>
+
+    <div class="row">
+      <span>Maximale Geschwindigkeit</span>
+      <strong><span id="speedValue">22</span> km/h</strong>
+    </div>
+
+    <input
+      type="range"
+      min="5"
+      max="35"
+      value="22"
+      oninput="changeSpeed(this.value)"
+    >
+
+    <button class="secondary" onclick="resetSpeed()">
+      Standard zurücksetzen
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ Scooter-Einstellungen</h2>
+
+    <div class="row">
+      <span>Tempomat</span>
+      <div class="switch" onclick="toggle(this)"></div>
+    </div>
+
+    <div class="row">
+      <span>Elektrische Bremse</span>
+      <div class="switch" onclick="toggle(this)"></div>
+    </div>
+
+    <div class="row">
+      <span>Start per Gashebel</span>
+      <div class="switch" onclick="toggle(this)"></div>
+    </div>
+
+    <div class="row">
+      <span>Rücklicht</span>
+      <div class="switch active" onclick="toggle(this)"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔋 Akku</h2>
+
+    <div class="row">
+      <span>Akkustand</span>
+      <strong id="battery2">--%</strong>
+    </div>
+
+    <div class="row">
+      <span>Status</span>
+      <span id="chargeStatus">Nicht verbunden</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🛠️ Werkzeuge</h2>
+
+    <button class="secondary" onclick="showInfo()">
+      Scooter-Informationen
+    </button>
+
+    <button class="secondary" onclick="showFirmware()">
+      Firmware-Information
+    </button>
+
+    <button class="secondary" onclick="disconnectScooter()">
+      🔴 Verbindung trennen
+    </button>
+  </div>
+
+</div>
+
+<footer>
+  Xiaomi Utility • Web App
+</footer>
+
+<script>
+
+let connected = false;
+
+function connectScooter() {
+  connected = true;
+
+  document.getElementById("statusText").textContent =
+    "Verbunden";
+
+  document.getElementById("statusDot").style.background =
+    "#30d158";
+
+  document.getElementById("battery").textContent =
+    "87%";
+
+  document.getElementById("battery2").textContent =
+    "87%";
+
+  document.getElementById("chargeStatus").textContent =
+    "Akku OK";
+}
+
+function disconnectScooter() {
+  connected = false;
+
+  document.getElementById("statusText").textContent =
+    "Nicht verbunden";
+
+  document.getElementById("statusDot").style.background =
+    "#777";
+
+  document.getElementById("battery").textContent =
+    "--%";
+
+  document.getElementById("battery2").textContent =
+    "--%";
+
+  document.getElementById("chargeStatus").textContent =
+    "Nicht verbunden";
+}
+
+function changeSpeed(value) {
+  document.getElementById("speedValue").textContent = value;
+}
+
+function resetSpeed() {
+  document.getElementById("speedValue").textContent = "22";
+}
+
+function toggle(element) {
+  element.classList.toggle("active");
+}
+
+function showInfo() {
+  alert(
+    "Xiaomi Utility\n\n" +
+    "Scooter: Nicht erkannt\n" +
+    "Bluetooth: Bereit\n" +
+    "Firmware: --"
+  );
+}
+
+function showFirmware() {
+  alert(
+    "Firmware-Information\n\n" +
+    "Noch kein Scooter verbunden."
+  );
+}
+
+</script>
+
+</body>
+</html>
